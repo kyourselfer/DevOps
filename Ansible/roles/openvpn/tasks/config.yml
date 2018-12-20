@@ -1,0 +1,78 @@
+---
+#
+- name: Create OpenVPN client configuration file
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0640
+  with_items:
+    - "etc/openvpn/client.conf"
+  notify:
+    - restart openvpn
+  when: openvpn_client
+  tags:
+    - config
+
+- name: Create OpenVPN server configuration file
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0640
+  with_items:
+    - "etc/openvpn/server.conf"
+  notify:
+    - restart openvpn
+  when: openvpn_server
+  tags:
+    - config
+
+- name: Create OpenVPN static key
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - "etc/openvpn/{{ openvpn_secretfile }}"
+  notify:
+    - restart openvpn
+  when: openvpn_static
+  tags:
+    - config
+
+- name: Create OpenVPN tls-auth key
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - "etc/openvpn/{{ openvpn_tafile }}"
+  notify:
+    - restart openvpn
+  when: openvpn_tlsauth
+  tags:
+    - config
+
+- name: Ensure OpenVPN service is started and enabled on boot
+  become: yes
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - "{{ openvpn_servicename }}"
+    - "{{ openvpn_servicename }}@{{ openvpn_servicenameinstance }}"
+  when: openvpn_client and not openvpn_static
+  tags:
+    - config

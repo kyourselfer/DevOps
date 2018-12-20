@@ -1,0 +1,8 @@
+#
+# ovpn hosts
+#
+[ovn_clients]
+buh1 ansible_ssh_host=127.0.0.1 ansible_port=2211
+[ovn_servers]
+server ansible_ssh_host=127.0.0.1 ansible_port=2210
+

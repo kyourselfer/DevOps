@@ -1,0 +1,37 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/xenial64"
+
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 384 
+      v.cpus = 4
+  end
+  config.vm.provision "shell", inline: "mkdir /root/.ssh/ ; cat /vagrant/ansible.pub >> /root/.ssh/authorized_keys && cat /vagrant/ansible.pub >> /home/vagrant/.ssh/authorized_keys"
+  # vagrant_ssh_username
+  config.ssh.username = "vagrant"
+# server
+  config.vm.define "server" do |server|
+    server.vm.network "private_network", ip: '192.168.10.100', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01" # to 
+    server.vm.network :forwarded_port, guest: 22, host: 2210, id: "ssh"
+  end
+# buh1
+  config.vm.define "buh1" do |buh1|
+    buh1.vm.network "private_network", ip: '192.168.10.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01" # to 
+    buh1.vm.network :forwarded_port, guest: 22, host: 2211, id: "ssh"
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "vvv"
+    ansible.playbook = "Playbook.yml"
+    # Ansible_ssh_user
+    ansible.force_remote_user = "vagrant"
+    ansible.become = "true"
+    ansible.inventory_path = "./hosts"
+    ansible.raw_arguments = [
+      "--connection=paramiko",
+      "--private-key=./ansible"
+    ]
+  end
+end

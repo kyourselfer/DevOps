@@ -1,0 +1,5 @@
+---
+# vars file for openvpn
+
+openvpn_secretfile: static.key
+openvpn_tafile: ta.key

@@ -1,0 +1,87 @@
+# {{ ansible_managed }}
+
+{% if openvpn_complzo %}
+comp-lzo
+{% endif %}
+{% if openvpn_daemon %}
+daemon
+{% endif %}
+dev {{ openvpn_dev }}
+{% if openvpn_static %}
+ifconfig {{ openvpn_serverifconfig }}
+{% endif %}
+{% if openvpn_ifconfigpoolpersist and not openvpn_static %}
+ifconfig-pool-persist {{ openvpn_ifconfigpoolpersist }}
+{% endif %}
+group {{ openvpn_group }}
+{% if openvpn_keepalive %}
+keepalive {{ openvpn_keepalive }}
+{% endif %}
+{% if openvpn_persistkey %}
+persist-key
+{% endif %}
+{% if openvpn_persisttun %}
+persist-tun
+{% endif %}
+{% if openvpn_pingtimerrem %}
+ping-timer-rem
+{% endif %}
+{% if not openvpn_static and openvpn_dhcpoptiondns %}
+{% for dns in openvpn_dhcpoptiondns %}
+push "dhcp-option DNS {{ dns }}"
+{% endfor %}
+{% endif %}
+{% if not openvpn_static and openvpn_redirectgateway %}
+push "redirect-gateway def1 bypass-dhcp"
+{% endif %}
+{% if openvpn_static %}
+secret {{ openvpn_secretfile }}
+{% endif %}
+{% if not openvpn_static %}
+server {{ openvpn_serversubnet }} {{ openvpn_serversubnetmask }}
+{% endif %}
+{% if openvpn_status %}
+status {{ openvpn_status }}
+{% endif %}
+{% if not openvpn_static %}
+tls-server
+client-to-client
+{% endif %}
+{% if openvpn_tlsauth and not openvpn_static %}
+tls-auth {{ openvpn_tafile }} 0 
+{% endif %}
+user {{ openvpn_user }}
+{% if not openvpn_static %}
+{% if openvpn_serverkey %}
+<key>
+-----BEGIN RSA PRIVATE KEY-----
+{{ openvpn_serverkey }}
+-----END RSA PRIVATE KEY-----
+</key>
+{% endif %}
+{% if openvpn_servercertificate %}
+<cert>
+-----BEGIN CERTIFICATE-----
+{{ openvpn_servercertificate }}
+-----END CERTIFICATE-----
+</cert>
+{% endif %}
+{% if openvpn_cacertificate %}
+<ca>
+-----BEGIN CERTIFICATE-----
+{{ openvpn_cacertificate }}
+-----END CERTIFICATE-----
+</ca>
+{% endif %}
+{% if openvpn_dhkey %}
+<dh>
+-----BEGIN DH PARAMETERS-----
+{{ openvpn_dhkey }}
+-----END DH PARAMETERS-----
+</dh>
+{% endif %}
+{% endif %}
+auth-nocache
+{% if openvpn_verb %}
+verb {{ openvpn_verb }}
+{% endif %}
