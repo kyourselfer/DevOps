@@ -7,6 +7,8 @@ comp-lzo
 daemon
 {% endif %}
 dev {{ openvpn_dev }}
+proto {{ openvpn_proto }}
+port {{ openvpn_remoteport }}
 {% if openvpn_static %}
 ifconfig {{ openvpn_serverifconfig }}
 {% endif %}
@@ -22,9 +24,6 @@ persist-key
 {% endif %}
 {% if openvpn_persisttun %}
 persist-tun
-{% endif %}
-{% if openvpn_pingtimerrem %}
-ping-timer-rem
 {% endif %}
 {% if not openvpn_static and openvpn_dhcpoptiondns %}
 {% for dns in openvpn_dhcpoptiondns %}

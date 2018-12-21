@@ -8,7 +8,7 @@ Vagrant.configure(2) do |config|
       v.memory = 384 
       v.cpus = 4
   end
-  config.vm.provision "shell", inline: "mkdir /root/.ssh/ ; cat /vagrant/ansible.pub >> /root/.ssh/authorized_keys && cat /vagrant/ansible.pub >> /home/vagrant/.ssh/authorized_keys"
+  config.vm.provision "shell", inline: "mkdir /root/.ssh/ ; cat /vagrant/ansible.pub >> /root/.ssh/authorized_keys && cat /vagrant/ansible.pub >> /home/vagrant/.ssh/authorized_keys && ln -s /usr/bin/python3 /usr/bin/python"
   # vagrant_ssh_username
   config.ssh.username = "vagrant"
 # server

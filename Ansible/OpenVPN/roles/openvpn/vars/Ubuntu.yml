@@ -1,9 +1,0 @@
----
-# vars file for openvpn (Ubuntu specific)
-
-openvpn_group: nogroup
-openvpn_packages:
-  - openvpn={{ openvpn_version }}*
-openvpn_servicename: openvpn
-openvpn_servicenameinstance: client
-openvpn_user: nobody

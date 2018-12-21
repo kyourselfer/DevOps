@@ -1,12 +1,12 @@
 ---
 # handlers for OpenVPN
 
-- name: reload systemd
-  become: yes
-  command: systemctl daemon-reload
-
 - name: restart openvpn
+  #  systemd:
+  #    name: "{{ openvpn_servicename }}"
+  #    state: restarted
+  #    enabled: yes
+  #    daemon_reload: yes
   become: yes
-  service:
-    name: "{{ openvpn_servicename }}"
-    state: restarted
+  command: echo 'handler_is_working' >> /etc/openvpn/YES.txt
+

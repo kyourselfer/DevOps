@@ -32,9 +32,6 @@ persist-key
 {% if openvpn_persisttun %}
 persist-tun
 {% endif %}
-{% if openvpn_pingtimerrem %}
-ping-timer-rem
-{% endif %}
 {% if not openvpn_client %}
 proto {{ openvpn_proto }}
 {% endif %}

@@ -1,13 +1,8 @@
 ---
 # tasks file for OpenVPN
 
-- name: Include distribution specific variables
-  include_vars: "{{ ansible_distribution }}.yml" 
-
-- name: Include distribution specific packets and configurations
-  include: "{{ ansible_distribution }}.yml"
-
-- name: Include configurations
-  include: config.yml
-
+- import_tasks: install.yml
+- import_tasks: config.yml
+  notify:
+    - restart openvpn
 - meta: flush_handlers
