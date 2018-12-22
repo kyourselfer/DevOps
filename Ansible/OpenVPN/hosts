@@ -1,8 +1,7 @@
 #
-# ovpn hosts
+# Inventory file of OpenVPN role
 #
-[ovn_clients]
-buh1 ansible_ssh_host=127.0.0.1 ansible_port=2211
-[ovn_servers]
+[ovpn_servers]
 server ansible_ssh_host=127.0.0.1 ansible_port=2210
-
+[ovpn_clients]
+buh1 ansible_ssh_host=127.0.0.1 ansible_port=2211

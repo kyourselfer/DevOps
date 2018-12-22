@@ -16,10 +16,10 @@ Vagrant.configure(2) do |config|
     server.vm.network "private_network", ip: '192.168.10.100', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01" # to 
     server.vm.network :forwarded_port, guest: 22, host: 2210, id: "ssh"
   end
-# buh1
-  config.vm.define "buh1" do |buh1|
-    buh1.vm.network "private_network", ip: '192.168.10.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01" # to 
-    buh1.vm.network :forwarded_port, guest: 22, host: 2211, id: "ssh"
+# client
+  config.vm.define "client" do |client|
+    client.vm.network "private_network", ip: '192.168.10.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01" # to 
+    client.vm.network :forwarded_port, guest: 22, host: 2211, id: "ssh"
   end
 
   config.vm.provision "ansible" do |ansible|

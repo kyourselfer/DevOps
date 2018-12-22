@@ -1,20 +1,4 @@
 ---
-#
-#- name: Create OpenVPN defaults configuration file
-  #  become: yes
-  #  template:
-          #    src: "{{ item }}.j2"
-    #    dest: "/{{ item }}"
-    #    owner: root
-    #    group: root
-    #    mode: 0644
-    #  with_items:
-          #    - "etc/default/openvpn"
-      #  when: ansible_distribution_release == "xenial"
-  #  notify:
-          #    - restart openvpn
-      #  tags:
-          #    - config
 
 - name: Make instances of OpenVPN
   become: yes
@@ -26,6 +10,7 @@
     mode: 0644
   with_items:
     - "etc/systemd/system/openvpn@.service"
+  notify: restart openvpn
   tags:
     - config
 
@@ -40,10 +25,9 @@
   with_items:
     - "etc/openvpn/{{ openvpn_secretfile }}"
   when: openvpn_static
+  notify: restart openvpn
   tags:
     - config
-  notify:
-  - restart openvpn
 
 - name: Create OpenVPN tls-auth key
   become: yes
@@ -56,23 +40,9 @@
   with_items:
     - "etc/openvpn/{{ openvpn_tafile }}"
   when: openvpn_tlsauth
+  notify: restart openvpn
   tags:
     - config
-  notify:
-  - restart openvpn
-
-      #- name: Ensure OpenVPN service is started and enabled on boot
-      #  become: yes
-      #  service:
-      #    name: "{{ item }}"
-      #    state: started
-      #  with_items:
-      #    - "{{ openvpn_servicename }}"
-      #  notify:
-      #    - restart openvpn
-      #  when: openvpn_client and not openvpn_static
-      #  tags:
-      #    - config
 
 - name: Create OpenVPN server configuration file
   become: yes
@@ -85,10 +55,9 @@
   with_items:
     - "etc/openvpn/server.conf"
   when: openvpn_server
+  notify: restart openvpn
   tags:
     - config
-  notify:
-  - restart openvpn
 
 - name: Create OpenVPN client configuration file
   become: yes
@@ -101,8 +70,8 @@
   with_items:
     - "etc/openvpn/client.conf"
   when: openvpn_client
+  notify: restart openvpn
   tags:
     - config
-  notify:
-  - restart openvpn
 
+...

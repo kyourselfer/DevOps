@@ -1,30 +1,31 @@
 OpenVPN
 -------------
-#### Установка и конфигурация OpenVPN
+#### Установка и конфигурация OpenVPN для Ubuntu (Xenial)
 Требования
--------------
+------------
 Роль требует Ansible 1.9 или выше
 Запуск
 ------------
-Чтобы настроить с использованием режима static (один ключ на две точки):
-
-Включить openvpn_static
-Включить режим openvpn_client или openvpn_server
-Если это клиент вы должны определить переменную openvpn_remote_host ip адресом сервера
-
-Чтобы настроить с использованием режима TLS server:
+Возможные режимы OpenVPN:
+##### TLS (server-client)
+##### STATIC (p2p)
+ 
+##### Чтобы настроить использование режима TLS:
 
 Включить openvpn_server
-
-Чтобы включить TLS client:
-
 Включить openvpn_client
+
+##### Чтобы настроить использование режима STATIC (один ключ на две точки):
+
+Включить режим openvpn_client или openvpn_server
+Включить openvpn_static
+На стороне клиента вы должны определить переменную openvpn_remote_host с ip адресом сервера
 
 Переменные роли
 ------------
 Имя | Умолчание | Описание
 --- | --- | ---
-ansible-openvpn_version | 2.4.6 | Версия OpenVPN
+openvpn_version | 2.4.6 | Версия OpenVPN
 openvpn_static		| false	| Вкл. режима статич. ключей (без x509 PKI и соединение ptp) 
 openvpn_client		| false | Вкл. в режим клиента
 openvpn_server          | false | Вкл. в режим сервера
@@ -46,7 +47,7 @@ openvpn_persisttun| true | при перезапуске процесса OpenVP
 openvpn_proto | udp | какой протокол использовать для соединения(tcp рекомендуют за NAT или proxy(CONNECT|SOCKS))
 openvpn_redirectgateway | false | шлюз по умолчанию удаленный сервер
 openvpn_remotehost | '' | доменное имя или ip хоста для подключения
-openvpn_remoteport | '' | удаленный номер порта
+openvpn_remoteport | '1195' | удаленный номер порта
 openvpn_remoteproto | "{{ openvpn_proto }}" | протокол удаленного хоста
 openvpn_resolvretry | infinite | если имя хоста не преобразуется, попытаться преобразовать в течении указанного времени (сек.)
 openvpn_secret | '' | секретный закрытый ключ для режима openvpn_static
@@ -57,7 +58,7 @@ openvpn_verb | 1 | уровень подробности логов (по умо
 openvpn_cacertificate | '' | открытый ключ авторитетного цента сертификации(CA) (подписываем закрытым ключем CA)
 openvpn_clientcertificate | '' |  открытый ключ клиента
 openvpn_clientkey | '' | закрытый ключ клиента
-
+openvpn_renegsec | 259200 | повторная аунтификация через определённый временной интервал
 Лицензия
 -------------
 BSD

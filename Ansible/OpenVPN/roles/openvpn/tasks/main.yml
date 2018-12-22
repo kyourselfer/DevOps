@@ -1,8 +1,8 @@
 ---
-# tasks file for OpenVPN
 
 - import_tasks: install.yml
 - import_tasks: config.yml
-  notify:
-    - restart openvpn
+
 - meta: flush_handlers
+
+...

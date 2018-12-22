@@ -1,20 +1,4 @@
 ---
-#
-#- name: Install OpenVPN GPG key
-#  become: yes
-#  apt_key:
-#    url: "{{ openvpn_deburl }}/pubkey.gpg"
-#    state: present
-#  tags:
-#    - install
-
-#- name: Add OpenVPN repository
-#  become: yes
-#  apt_repository:
-#    repo: 'deb {{ openvpn_deburl }} {{ ansible_distribution_release }} main'
-#    state: present
-#  tags:
-#    - install
 
 - name: Install OpenVPN packages
   become: yes
@@ -26,3 +10,5 @@
     - "{{ openvpn_packages }}"
   tags:
     - install
+
+...

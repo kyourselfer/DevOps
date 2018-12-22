@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 [Unit]
-Description=OpenVPN connection to %i
+Description=OpenVPN connection to instance %i
 PartOf=openvpn.service
 ReloadPropagatedFrom=openvpn.service
 Before=systemd-user-sessions.service

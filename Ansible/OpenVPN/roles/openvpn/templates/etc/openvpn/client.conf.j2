@@ -2,22 +2,22 @@
 
 {%if not openvpn_static %}
 client
-{% endif %}
-{% if openvpn_complzo %}
-comp-lzo
+tls-client
 {% endif %}
 {% if openvpn_daemon %}
 daemon
 {% endif %}
 dev {{ openvpn_dev }}
-{% if openvpn_secextra %}
+user {{ openvpn_user }}
 group {{ openvpn_group }}
-{% endif %}
 {% if openvpn_static %}
 ifconfig {{ openvpn_clientifconfig }}
 {% endif %}
 {% if openvpn_keepalive %}
 keepalive {{ openvpn_keepalive }}
+{% endif %}
+{% if openvpn_complzo %}
+comp-lzo
 {% endif %}
 {% if openvpn_client %}
 nobind
@@ -40,19 +40,19 @@ pull
 {% endif %}
 {% if openvpn_static %}
 secret {{ openvpn_secretfile }}
+cipher {{ openvpn_cipherstatic }}
 {% endif %}
 remote {{ openvpn_remotehost }} {{ openvpn_remoteport }} {{ openvpn_remoteproto }}
 {% if openvpn_resolvretry %}
 resolv-retry {{ openvpn_resolvretry }}
 {% endif %}
-{% if not openvpn_static %}
-tls-client
-{% endif %}
-{% if openvpn_secextra %}
-user {{ openvpn_user }}
+{% if openvpn_client and not openvpn_static %}
+cipher {{ openvpn_ciphertls }}
+reneg-sec {{ openvpn_renegsec }}
 {% endif %}
 {% if openvpn_verb %}
 verb {{ openvpn_verb }}
+mute {{ openvpn_mute }}
 {% endif %}
 {% if not openvpn_static %}
 {% if openvpn_clientkey %}
@@ -76,9 +76,6 @@ verb {{ openvpn_verb }}
 -----END CERTIFICATE-----
 </ca>
 {% endif %}
-{% if openvpn_tlsauth %}
-tls-auth {{ openvpn_tafile }} 1 
-{% endif %}
 {% if openvpn_dhkey %}
 <dh>
 -----BEGIN DH PARAMETERS-----
@@ -86,9 +83,12 @@ tls-auth {{ openvpn_tafile }} 1
 -----END DH PARAMETERS-----
 </dh>
 {% endif %}
+{% if openvpn_tlsauthkey %}
+<tls-auth>
+-----BEGIN OpenVPN Static key V1-----
+{{ openvpn_tlsauthkey }}
+-----END OpenVPN Static key V1-----
+</tls-auth>
 key-direction 1
 {% endif %}
-{% if openvpn_renegsec and not openvpn_static %}
-reneg-sec {{ openvpn_renegsec }}
 {% endif %}
-

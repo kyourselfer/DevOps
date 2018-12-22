@@ -1,7 +1,8 @@
 # {{ ansible_managed }}
 
-{% if openvpn_complzo %}
-comp-lzo
+{%if not openvpn_static %}
+mode server
+tls-server
 {% endif %}
 {% if openvpn_daemon %}
 daemon
@@ -12,18 +13,10 @@ port {{ openvpn_remoteport }}
 {% if openvpn_static %}
 ifconfig {{ openvpn_serverifconfig }}
 {% endif %}
-{% if openvpn_ifconfigpoolpersist and not openvpn_static %}
-ifconfig-pool-persist {{ openvpn_ifconfigpoolpersist }}
-{% endif %}
-group {{ openvpn_group }}
-{% if openvpn_keepalive %}
-keepalive {{ openvpn_keepalive }}
-{% endif %}
-{% if openvpn_persistkey %}
-persist-key
-{% endif %}
-{% if openvpn_persisttun %}
-persist-tun
+{% if not openvpn_static %}
+server {{ openvpn_serversubnet }} {{ openvpn_serversubnetmask }}
+topology subnet
+push "topology subnet"
 {% endif %}
 {% if not openvpn_static and openvpn_dhcpoptiondns %}
 {% for dns in openvpn_dhcpoptiondns %}
@@ -33,23 +26,40 @@ push "dhcp-option DNS {{ dns }}"
 {% if not openvpn_static and openvpn_redirectgateway %}
 push "redirect-gateway def1 bypass-dhcp"
 {% endif %}
+{% if openvpn_ifconfigpoolpersist and not openvpn_static %}
+ifconfig-pool-persist {{ openvpn_ifconfigpoolpersist }}
+{% endif %}
+{% if openvpn_keepalive %}
+keepalive {{ openvpn_keepalive }}
+{% endif %}
+user {{ openvpn_user }}
+group {{ openvpn_group }}
+{% if openvpn_complzo %}
+comp-lzo
+{% endif %}
+{% if openvpn_persistkey %}
+persist-key
+{% endif %}
+{% if openvpn_persisttun %}
+persist-tun
+{% endif %}
 {% if openvpn_static %}
 secret {{ openvpn_secretfile }}
-{% endif %}
-{% if not openvpn_static %}
-server {{ openvpn_serversubnet }} {{ openvpn_serversubnetmask }}
 {% endif %}
 {% if openvpn_status %}
 status {{ openvpn_status }}
 {% endif %}
-{% if not openvpn_static %}
-tls-server
-client-to-client
+{% if openvpn_static %}
+cipher {{ openvpn_cipherstatic }}
 {% endif %}
-{% if openvpn_tlsauth and not openvpn_static %}
-tls-auth {{ openvpn_tafile }} 0 
+{% if openvpn_server and not openvpn_static %}
+cipher {{ openvpn_ciphertls }}
 {% endif %}
-user {{ openvpn_user }}
+auth-nocache
+{% if openvpn_verb %}
+verb {{ openvpn_verb }}
+mute {{ openvpn_mute }}
+{% endif %}
 {% if not openvpn_static %}
 {% if openvpn_serverkey %}
 <key>
@@ -72,6 +82,14 @@ user {{ openvpn_user }}
 -----END CERTIFICATE-----
 </ca>
 {% endif %}
+{% if openvpn_tlsauthkey %}
+<tls-auth>
+-----BEGIN OpenVPN Static key V1-----
+{{ openvpn_tlsauthkey }}
+-----END OpenVPN Static key V1-----
+</tls-auth>
+key-direction 0
+{% endif %}
 {% if openvpn_dhkey %}
 <dh>
 -----BEGIN DH PARAMETERS-----
@@ -79,8 +97,4 @@ user {{ openvpn_user }}
 -----END DH PARAMETERS-----
 </dh>
 {% endif %}
-{% endif %}
-auth-nocache
-{% if openvpn_verb %}
-verb {{ openvpn_verb }}
 {% endif %}

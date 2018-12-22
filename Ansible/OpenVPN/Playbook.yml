@@ -1,21 +1,19 @@
 ---
 #
-# OpenVPN side of clients
+# Main playbook of OpenVPN role
 #
-#- hosts: all
-#  gather_facts: false
 
+# OpenVPN. Server's side.
 - hosts: server
   gather_facts: false
   become: yes
   roles:
-    - { role: openvpn, openvpn_server: true, openvpn_static: false }
-  handlers:
-    - include: roles/openvpn/handlers/main.yml
+    - { role: openvpn, openvpn_server: true, openvpn_static: true }
 
-- hosts: buh1
+# OpenVPN. Client's side.
+- hosts: client
   gather_facts: false
   become: yes
   roles:
-    - { role: openvpn, openvpn_client: true, openvpn_remotehost: '192.168.10.100', openvpn_remoteport: '1194', openvpn_static: false }
+    - { role: openvpn, openvpn_client: true, openvpn_remotehost: '192.168.10.100', openvpn_static: true }
 
