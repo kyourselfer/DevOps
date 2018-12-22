@@ -1,9 +1,14 @@
 ---
 
 openvpn_secretfile: static.key
-openvpn_tafile: ta.key
 openvpn_group: nogroup
-openvpn_packages: openvpn={{ openvpn_version }}*
+openvpn_packages:
+  - openvpn={{ openvpn_version }}*
+openvpn_sysDunit:
+  - etc/systemd/system/openvpn@.service
+  - etc/openvpn/server.conf
+  - etc/openvpn/client.conf
+  - "etc/openvpn/{{ openvpn_secretfile }}"  
 openvpn_servicename: openvpn
 openvpn_user: nobody
 openvpn_list: install

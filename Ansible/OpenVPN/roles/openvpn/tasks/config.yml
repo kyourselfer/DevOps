@@ -3,43 +3,11 @@
 - name: Make instances of OpenVPN
   become: yes
   template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
+    src: "{{ openvpn_sysDunit[0] }}.j2"
+    dest: "/{{ openvpn_sysDunit[0] }}"
     owner: root
     group: root
     mode: 0644
-  with_items:
-    - "etc/systemd/system/openvpn@.service"
-  notify: restart openvpn
-  tags:
-    - config
-
-- name: Create OpenVPN static key
-  become: yes
-  template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
-    owner: root
-    group: root
-    mode: 0600
-  with_items:
-    - "etc/openvpn/{{ openvpn_secretfile }}"
-  when: openvpn_static
-  notify: restart openvpn
-  tags:
-    - config
-
-- name: Create OpenVPN tls-auth key
-  become: yes
-  template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
-    owner: root
-    group: root
-    mode: 0600
-  with_items:
-    - "etc/openvpn/{{ openvpn_tafile }}"
-  when: openvpn_tlsauth
   notify: restart openvpn
   tags:
     - config
@@ -47,13 +15,11 @@
 - name: Create OpenVPN server configuration file
   become: yes
   template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
+    src: "{{ openvpn_sysDunit[1] }}.j2"
+    dest: "/{{ openvpn_sysDunit[1] }}"
     owner: root
     group: root
     mode: 0640
-  with_items:
-    - "etc/openvpn/server.conf"
   when: openvpn_server
   notify: restart openvpn
   tags:
@@ -62,14 +28,25 @@
 - name: Create OpenVPN client configuration file
   become: yes
   template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
+    src: "{{ openvpn_sysDunit[2] }}.j2"
+    dest: "/{{ openvpn_sysDunit[2] }}"
     owner: root
     group: root
     mode: 0640
-  with_items:
-    - "etc/openvpn/client.conf"
   when: openvpn_client
+  notify: restart openvpn
+  tags:
+    - config
+
+- name: Create OpenVPN static key
+  become: yes
+  template:
+    src: "{{ openvpn_sysDunit[3] }}.j2"
+    dest: "/{{ openvpn_sysDunit[3] }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: openvpn_static
   notify: restart openvpn
   tags:
     - config

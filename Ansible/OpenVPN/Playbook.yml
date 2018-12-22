@@ -8,12 +8,12 @@
   gather_facts: false
   become: yes
   roles:
-    - { role: openvpn, openvpn_server: true, openvpn_static: true }
+    - { role: openvpn, openvpn_server: true, openvpn_static: false }
 
 # OpenVPN. Client's side.
 - hosts: client
   gather_facts: false
   become: yes
   roles:
-    - { role: openvpn, openvpn_client: true, openvpn_remotehost: '192.168.10.100', openvpn_static: true }
+    - { role: openvpn, openvpn_client: true, openvpn_remotehost: '192.168.10.100', openvpn_static: false }
 
