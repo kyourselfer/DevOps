@@ -14,17 +14,21 @@ OpenVPN
  
 ##### Чтобы настроить использование режима TLS:
 
-Включить openvpn_server
+Включить `openvpn_server`
 
-Включить openvpn_client
+Включить `openvpn_client`
+
+На стороне клиента вы должны определить переменную `openvpn_remotehost` с ip адресом сервера
 
 ##### Чтобы настроить использование режима STATIC (один ключ на две точки):
 
-Включить режим openvpn_client или openvpn_server
+Включить `openvpn_server`
 
-Включить openvpn_static
+Включить `openvpn_client`
 
-На стороне клиента вы должны определить переменную openvpn_remote_host с ip адресом сервера
+Включить `openvpn_static`
+
+На стороне клиента вы должны определить переменную `openvpn_remotehost` с ip адресом сервера
 
 Переменные роли
 ------------
