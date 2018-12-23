@@ -11,6 +11,5 @@ openvpn_sysDunit:
   - "etc/openvpn/{{ openvpn_secretfile }}"  
 openvpn_servicename: openvpn
 openvpn_user: nobody
-openvpn_list: install
 
 ...
