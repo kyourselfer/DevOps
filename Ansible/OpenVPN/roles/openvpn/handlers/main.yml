@@ -1,6 +1,7 @@
 ---
 
 - name: restart openvpn
+  become: yes 
   systemd:
     name: "{{ openvpn_servicename }}"
     state: restarted
