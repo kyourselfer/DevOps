@@ -1,0 +1,84 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
+  end
+  config.vm.provision "shell", inline: "mkdir /root/.ssh/ && cat /vagrant/ansible.pub >> /root/.ssh/authorized_keys && cat /vagrant/ansible.pub >> /home/vagrant/.ssh/authorized_keys"
+  config.ssh.username = "vagrant"
+
+  config.vm.define "logsrv" do |logsrv|
+    logsrv.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "256"]
+    end
+    logsrv.vm.network "private_network", ip: '192.168.168.111', adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "sw01"
+    logsrv.vm.network :forwarded_port, guest: 22, host: 2201, id: "ssh"
+    logsrv.vm.hostname = "logsrv"
+  end
+
+  config.vm.define "logweb" do |logweb|
+    logweb.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+    end
+    logweb.vm.network "private_network", ip: '192.168.168.110', adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "sw01"
+    logweb.vm.network :forwarded_port, guest: 22, host: 2202, id: "ssh"
+    logweb.vm.hostname = "logweb"
+  end
+
+  config.vm.define "master.example.com" do |o01|
+    o01.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
+      vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
+      unless File.exist?('./sdd/sdb.vdi')
+        vb.customize ['createhd', '--filename', './sdd/sdb.vdi', '--variant', 'Fixed', '--size', 2048]
+        vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './sdd/sdb.vdi']
+      end
+    end
+    o01.vm.network "private_network", ip: '192.168.168.100', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01"
+    o01.vm.network :forwarded_port, guest: 22, host: 2203, id: "ssh"
+    o01.vm.hostname = "master.example.com"
+  end
+  config.vm.define "node01.example.com" do |n01|
+    n01.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+    end
+    n01.vm.network "private_network", ip: '192.168.168.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01"
+    n01.vm.network :forwarded_port, guest: 22, host: 2204, id: "ssh"
+    n01.vm.hostname = "node01.example.com"
+  end
+  config.vm.define "node02.example.com" do |n02|
+    n02.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "512"]
+    end
+    n02.vm.network "private_network", ip: '192.168.168.102', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw01"
+    n02.vm.network :forwarded_port, guest: 22, host: 2205, id: "ssh"
+    n02.vm.hostname = "node02.example.com"
+  end
+
+  
+#  config.vm.define "logweb2" do |logweb2|
+#    logweb2.vm.provider :virtualbox do |vb|
+#      vb.customize ["modifyvm", :id, "--memory", "2048"]
+#    end
+#    logweb2.vm.network "private_network", ip: '192.168.168.112', adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "sw01"
+#    logweb2.vm.hostname = "logweb2"
+#  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "vvv"
+    ansible.playbook = "Playbook.yml"
+    # Ansible_ssh_user
+    ansible.force_remote_user = "vagrant"
+    ansible.become = "true"
+    ansible.inventory_path = "./hosts"
+    ansible.raw_arguments = [
+      "--connection=paramiko",
+      "--private-key=./ansible"
+    ]
+  end
+
+end
