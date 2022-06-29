@@ -42,7 +42,7 @@ services:
     links:
       - app
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nextcloud-nginx.conf:/etc/nginx/nginx.conf:ro
     volumes_from:
       - app
   
@@ -62,6 +62,6 @@ services:
       - web
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx.conf.revers-proxy:/etc/nginx/nginx.conf:ro
+      - ./nextcloud-nginx-revers-proxy.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/www:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/nginx/ssl/:rw
