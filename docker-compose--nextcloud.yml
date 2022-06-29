@@ -1,0 +1,67 @@
+version: '2'
+
+volumes:
+  nextcloud:
+  db:
+  web:
+  web-revers-proxy:
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=GJDGFDGHFHGJG536753668GJFJDGJHJJGHCFJFGKJH234
+      - MYSQL_PASSWORD=GJDGFDGHFHGJG536753668GJFJDGJHJJGHCFJFGKJH234267826786
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  app:
+    image: nextcloud:fpm
+    restart: always
+    links:
+      - db
+    volumes:
+      - ./nextcloud:/var/www/html
+    environment:
+      - MYSQL_PASSWORD=GJDGFDGHFHGJG536753668GJFJDGJHJJGHCFJFGKJH234267826786
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db
+
+  web:
+    image: nginx
+    restart: always
+    ports:
+      - 8082:80
+    links:
+      - app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    volumes_from:
+      - app
+  
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+
+  web-revers-proxy:
+    image: nginxproxy/nginx-proxy 
+    restart: always
+    ports:
+      - 8081:80
+      - 443:443
+    links:
+      - web
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx.conf.revers-proxy:/etc/nginx/nginx.conf:ro
+      - ./certbot/www:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/nginx/ssl/:rw
