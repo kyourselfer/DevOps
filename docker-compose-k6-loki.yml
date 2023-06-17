@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  k6-loki-loadtest:
+    image: kyourselfer/apline:xk6-loki 
+    hostname: k6-loki-loadtest
+    container_name: k6-loki-loadtest
+    restart: always 
+    ports:
+      - "3000:3000"
+    command: ["run", "scripts/basics_logs_push.js"]
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - "k6-scripts:/home/k6/scripts"
+
+volumes:
+  k6-scripts:
+    driver: local
+    driver_opts:
+      type:   none
+      o:      bind
+      device: "/home/veliseev/LoadTest_Loki/scripts"
